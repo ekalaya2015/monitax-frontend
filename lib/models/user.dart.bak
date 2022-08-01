@@ -1,0 +1,26 @@
+import 'package:flutter/foundation.dart';
+import 'package:scoped_model/scoped_model.dart';
+
+class UserModel with ChangeNotifier, DiagnosticableTreeMixin {
+  String _firstname = '';
+  String _lastname = '';
+  String _nik = '';
+  String _phone = '';
+  String _role = '';
+  String get firstname => _firstname;
+  String get lastname => _lastname;
+  String get nik => _nik;
+  String get phone => _phone;
+  String get role => _role;
+
+  void updatefirstname(fn) {
+    this._firstname = fn;
+    notifyListeners();
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('firstname', firstname));
+  }
+}
