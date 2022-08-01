@@ -19,7 +19,6 @@ import '../models/device.dart';
 import 'package:monitax/screens/home.dart';
 import 'package:image/image.dart' as img;
 import 'package:monitax/services/user_api.dart';
-import 'package:camera/camera.dart';
 
 class Profile extends StatelessWidget {
   const Profile({Key? key}) : super(key: key);

@@ -74,7 +74,7 @@ class User {
   factory User.fromMap(Map<String, dynamic> map) {
     List<Device> list = [];
     for (final element in map['devices']) {
-      list.add(element);
+      list.add(Device.fromMap(element));
     }
     return User(
       id: map['id'] as String,
