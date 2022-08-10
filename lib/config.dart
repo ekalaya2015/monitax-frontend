@@ -9,4 +9,5 @@ class Config {
   static NumberFormat formatCurrency =
       NumberFormat.simpleCurrency(locale: 'id-ID');
   static DateFormat formatDate = DateFormat('yyyy-MM-dd H:m:s');
+  static DateFormat simpleDate = DateFormat('yyyy-MM-dd');
 }

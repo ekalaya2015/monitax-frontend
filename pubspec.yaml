@@ -27,6 +27,8 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  flutter_localizations:
+    sdk: flutter
   flutter:
     sdk: flutter
 
@@ -47,8 +49,10 @@ dependencies:
   syncfusion_flutter_datagrid: ^20.2.39
   permission_handler: ^10.0.0
   image_picker: ^0.8.5+3
-  image: ^3.2.0
   path_provider: ^2.0.11
+  overlay_loading_progress: ^1.0.0
+  change_case: ^1.0.2
+  syncfusion_localizations: ^20.2.43
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -79,7 +83,6 @@ flutter:
     - assets/images/taxes.png
     - assets/images/alert.png
     - assets/images/kpi.png
-
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

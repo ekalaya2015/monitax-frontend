@@ -21,26 +21,20 @@ class DisplayImage extends StatelessWidget {
 
   // Builds Profile Image
   Widget buildImage(Color color, String strimage) {
-    var image;
-    if (strimage.isNotEmpty) {
-      var savedir = io.Directory.systemTemp;
-      debugPrint(savedir.path);
-      String filePath = '${savedir.path}/profile.jpg';
-      io.File file = io.File(filePath);
-      final List<int> decodedBytes = base64Decode(strimage);
-      file.writeAsBytesSync(decodedBytes, mode: io.FileMode.write, flush: true);
-      image = FileImage(io.File(filePath));
-    }
-
     return Center(
         child: (strimage.isEmpty)
-            ? const CircleAvatar(
-                backgroundColor: Colors.blue,
-                radius: 70,
-              )
+            ? CircleAvatar(
+                minRadius: 75,
+                backgroundColor: Colors.grey,
+                child: const CircleAvatar(
+                    backgroundColor: Colors.blue, radius: 70))
             : CircleAvatar(
-                backgroundImage: image as ImageProvider,
-                radius: 70,
+                minRadius: 75,
+                backgroundColor: Colors.grey,
+                child: CircleAvatar(
+                  radius: 70,
+                  backgroundImage: NetworkImage(strimage),
+                ),
               ));
   }
 

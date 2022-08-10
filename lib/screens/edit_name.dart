@@ -10,7 +10,10 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:monitax/screens/profile.dart';
 
 class EditName extends StatefulWidget {
-  EditName({Key? key}) : super(key: key);
+  final String firstname;
+  final String lastname;
+  EditName({Key? key, required this.firstname, required this.lastname})
+      : super(key: key);
 
   @override
   State<EditName> createState() => _EditNameState();
@@ -61,6 +64,8 @@ class _EditNameState extends State<EditName> {
   @override
   void initState() {
     super.initState();
+    txtFirstName.text = widget.firstname;
+    txtLastName.text = widget.lastname;
     setState(() {
       isUpdated = false;
     });
@@ -103,7 +108,7 @@ class _EditNameState extends State<EditName> {
                     Padding(
                       padding: const EdgeInsets.only(top: 20, left: 40),
                       child: SizedBox(
-                        height: 100,
+                        height: 60,
                         width: MediaQuery.of(context).size.width * 0.8,
                         child: TextFormField(
                           keyboardType: TextInputType.name,
@@ -122,7 +127,7 @@ class _EditNameState extends State<EditName> {
                     Padding(
                       padding: const EdgeInsets.only(top: 20, left: 40),
                       child: SizedBox(
-                        height: 100,
+                        height: 60,
                         width: MediaQuery.of(context).size.width * 0.8,
                         child: TextFormField(
                           controller: txtLastName,

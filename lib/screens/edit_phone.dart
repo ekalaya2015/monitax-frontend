@@ -12,7 +12,8 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:monitax/config.dart';
 
 class EditPhone extends StatefulWidget {
-  EditPhone({Key? key}) : super(key: key);
+  final String phoneno;
+  EditPhone({Key? key, required this.phoneno}) : super(key: key);
 
   @override
   State<EditPhone> createState() => _EditPhoneState();
@@ -27,6 +28,7 @@ class _EditPhoneState extends State<EditPhone> {
   @override
   void initState() {
     super.initState();
+    txtPhone.text = widget.phoneno;
     setState(() {
       isUpdated = false;
     });

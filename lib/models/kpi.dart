@@ -2,7 +2,7 @@
 import 'dart:convert';
 
 class KPI {
-  String date;
+  DateTime date;
   double total;
   double tax;
   int trx;
@@ -14,7 +14,7 @@ class KPI {
   });
 
   KPI copyWith({
-    String? date,
+    DateTime? date,
     double? total,
     double? tax,
     int? trx,
@@ -29,7 +29,7 @@ class KPI {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'date': date,
+      'date': date.millisecondsSinceEpoch,
       'total': total,
       'tax': tax,
       'trx': trx,
@@ -37,10 +37,15 @@ class KPI {
   }
 
   factory KPI.fromMap(Map<String, dynamic> map) {
+    double total = 0.0;
+    double tax = 0.0;
+    total = (map['total']).toDouble();
+    tax = (map['tax']).toDouble();
     return KPI(
-      date: map['date'] as String,
-      total: map['total'] as double,
-      tax: map['tax'] as double,
+      date: DateTime.parse(map[
+          'date']), //DateTime.fromMillisecondsSinceEpoch(map['date'] as int),
+      total: total, //map['total'] as double,
+      tax: tax, //map['tax'] as double,
       trx: map['trx'] as int,
     );
   }

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:monitax/screens/login.dart';
-import 'package:monitax/models/user.dart';
-import 'package:provider/provider.dart';
 // import 'package:scoped_model/scoped_model.dart';
-import 'package:monitax/provider/user.dart';
+import 'package:syncfusion_localizations/syncfusion_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

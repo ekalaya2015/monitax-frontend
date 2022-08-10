@@ -15,10 +15,12 @@ import 'package:monitax/screens/edit_address.dart';
 import 'package:monitax/screens/edit_phone.dart';
 import 'package:monitax/screens/reset_password.dart';
 import 'package:monitax/screens/device_map.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import '../models/device.dart';
 import 'package:monitax/screens/home.dart';
-import 'package:image/image.dart' as img;
 import 'package:monitax/services/user_api.dart';
+import 'package:overlay_loading_progress/overlay_loading_progress.dart';
 
 class Profile extends StatelessWidget {
   const Profile({Key? key}) : super(key: key);
@@ -298,14 +300,12 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
-  String strImage = '';
-  bool loaded = false;
+  String picurl = '';
+  bool isUpdated = false;
   @override
   void initState() {
     super.initState();
-    setState(() {
-      loaded = false;
-    });
+    picurl = widget.user.picture;
   }
 
   @override
@@ -314,30 +314,51 @@ class _UserProfileState extends State<UserProfile> {
       padding: const EdgeInsets.only(top: 10, right: 20, left: 40),
       child: Column(
         children: [
-          InkWell(
-              onTap: () async {
-                ImagePicker picker = ImagePicker();
-                XFile? image =
-                    await picker.pickImage(source: ImageSource.camera);
-                if (image != null) {
-                  final bytes = await io.File(image.path).readAsBytes();
-                  img.Image? _img = img.decodeImage(bytes);
-                  String tempPath = (await getTemporaryDirectory()).path;
-                  io.File file = io.File('$tempPath/profile.jpg');
-                  await file.writeAsBytes(bytes);
-                  String _strimage = await UserApi().upload(file);
-                  if (_strimage.isNotEmpty) {
-                    setState(() {
-                      loaded = true;
-                      strImage = _strimage;
-                    });
-                  }
-                }
-              },
-              child: DisplayImage(
-                strimage: (loaded) ? strImage : widget.user.picture,
-                onPressed: () {},
-              )),
+          Stack(
+            children: [
+              DisplayImage(
+                  strimage: (isUpdated) ? picurl : widget.user.picture,
+                  onPressed: () async {}),
+              Positioned(
+                  bottom: 0,
+                  right: MediaQuery.of(context).size.width / 2 - 90,
+                  child: InkWell(
+                    onTap: () async {
+                      ImagePicker picker = ImagePicker();
+                      XFile? image =
+                          await picker.pickImage(source: ImageSource.camera);
+                      if (image != null) {
+                        // ignore: use_build_context_synchronously
+                        OverlayLoadingProgress.start(context,
+                            barrierDismissible: false);
+                        final bytes = await io.File(image.path).readAsBytes();
+                        String tempPath = (await getTemporaryDirectory()).path;
+                        io.File file = io.File('$tempPath/profile.jpg');
+                        await file.writeAsBytes(bytes);
+                        String response = await UserApi().upload(file);
+                        if (response.isNotEmpty) {
+                          // ignore: use_build_context_synchronously
+                          OverlayLoadingProgress.stop(context);
+                          // ignore: use_build_context_synchronously
+                          showTopSnackBar(
+                              context,
+                              const CustomSnackBar.success(
+                                  message: 'Upload picture success'));
+                          setState(() {
+                            picurl = response;
+                            isUpdated = true;
+                          });
+                        }
+                      }
+                    },
+                    child: const Icon(
+                      Icons.camera_alt,
+                      size: 32,
+                      color: Colors.blue,
+                    ),
+                  ))
+            ],
+          ),
           Text(
             widget.user.role,
             style:
@@ -348,14 +369,29 @@ class _UserProfileState extends State<UserProfile> {
               '${widget.user.first_name} ${widget.user.last_name}',
               'Name',
               true,
-              EditName()),
+              EditName(
+                firstname: widget.user.first_name,
+                lastname: widget.user.last_name,
+              )),
           buildUserInfoDisplay(
               context, widget.user.username, 'Email', false, null),
           buildUserInfoDisplay(context, widget.user.nik, 'NIK', false, null),
           buildUserInfoDisplay(
-              context, widget.user.address, 'Address', true, EditAddress()),
+              context,
+              widget.user.address,
+              'Address',
+              true,
+              EditAddress(
+                data: widget.user.address,
+              )),
           buildUserInfoDisplay(
-              context, widget.user.phone_no, 'Phone', true, EditPhone()),
+              context,
+              widget.user.phone_no,
+              'Phone',
+              true,
+              EditPhone(
+                phoneno: widget.user.phone_no,
+              )),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -419,7 +455,7 @@ Widget buildUserInfoDisplay(BuildContext context, String getValue, String title,
                             navigateSecondPage(context, editpage);
                           },
                           child: const Icon(
-                            Icons.edit,
+                            Icons.arrow_forward_ios,
                             color: Colors.grey,
                             size: 16.0,
                           ),

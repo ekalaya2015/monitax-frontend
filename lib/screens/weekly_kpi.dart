@@ -80,7 +80,9 @@ class KPIChart extends StatelessWidget {
           elevation: 4,
           child: SfCartesianChart(
               plotAreaBackgroundColor: Colors.amber[50],
-              primaryXAxis: CategoryAxis(title: AxisTitle(text: 'Tanggal')),
+              primaryXAxis: DateTimeAxis(
+                  title: AxisTitle(text: 'Tanggal'),
+                  dateFormat: DateFormat.yMd()),
               primaryYAxis: NumericAxis(
                   numberFormat: NumberFormat.compactCurrency(
                       locale: 'id-ID', symbol: 'Rp')),
@@ -90,27 +92,28 @@ class KPIChart extends StatelessWidget {
               legend: Legend(isVisible: true, position: LegendPosition.bottom),
               // Enable tooltip
               tooltipBehavior: TooltipBehavior(enable: true),
-              series: <SplineAreaSeries<KPI, String>>[
-                SplineAreaSeries<KPI, String>(
+              series: <ColumnSeries<KPI, DateTime>>[
+                ColumnSeries<KPI, DateTime>(
                     dataSource: data,
                     xValueMapper: (KPI sales, _) {
-                      List<String> list = sales.date.split('-');
-                      String label = '${list[1]}/${list[2]}';
-                      return label;
+                      // List<String> list = sales.date.split('-');
+                      // String label = '${list[1]}/${list[2]}';
+                      return sales.date;
                     },
                     yValueMapper: (KPI sales, _) => sales.total,
                     name: 'Sales',
                     // Enable data label
                     dataLabelSettings:
                         const DataLabelSettings(isVisible: false)),
-                SplineAreaSeries<KPI, String>(
+                ColumnSeries<KPI, DateTime>(
                     emptyPointSettings:
                         EmptyPointSettings(mode: EmptyPointMode.gap),
                     dataSource: data,
                     xValueMapper: (KPI sales, _) {
-                      List<String> list = sales.date.split('-');
-                      String label = '${list[1]}/${list[2]}';
-                      return label;
+                      // List<String> list = sales.date.split('-');
+                      // String label = '${list[1]}/${list[2]}';
+
+                      return sales.date;
                     },
                     yValueMapper: (KPI sales, _) => sales.tax,
                     name: 'Tax',
@@ -125,11 +128,13 @@ class KPIChart extends StatelessWidget {
                 title: ChartTitle(text: 'Weekly Transaction'),
                 plotAreaBackgroundColor: Colors.amber[50],
                 tooltipBehavior: TooltipBehavior(enable: true),
-                primaryXAxis: CategoryAxis(title: AxisTitle(text: 'Tanggal')),
+                primaryXAxis: DateTimeAxis(
+                    title: AxisTitle(text: 'Tanggal'),
+                    dateFormat: DateFormat.yMd()),
                 legend:
                     Legend(isVisible: true, position: LegendPosition.bottom),
-                series: <BarSeries<KPI, String>>[
-                  BarSeries(
+                series: <ColumnSeries<KPI, DateTime>>[
+                  ColumnSeries(
                       dataLabelSettings:
                           const DataLabelSettings(isVisible: true),
                       name: 'Transaction',
