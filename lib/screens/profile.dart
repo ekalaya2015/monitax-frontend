@@ -41,6 +41,8 @@ class Profile extends StatelessWidget {
             address: "loading ...",
             phone_no: "loading ...",
             role: "loading ...",
+            area: Area(
+                provinsi_id: 0, kota_id: 0, kecamatan_id: 0, kelurahan_id: 0),
             devices: []),
         builder: (context, child) {
           final user = context.watch<User>();
@@ -383,6 +385,7 @@ class _UserProfileState extends State<UserProfile> {
               true,
               EditAddress(
                 data: widget.user.address,
+                area: widget.user.area,
               )),
           buildUserInfoDisplay(
               context,

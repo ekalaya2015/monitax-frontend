@@ -34,8 +34,11 @@ class _EditNameState extends State<EditName> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     var token = pref.getString('token');
     var url = '${Config.apiURL}/users/me/profile';
-    final body = jsonEncode(
-        {'first_name': txtFirstName.text, 'last_name': txtLastName.text});
+    final body = jsonEncode({
+      'first_name': txtFirstName.text,
+      'last_name': txtLastName.text,
+      'area': {}
+    });
     final response = await http
         .patch(Uri.parse(url),
             headers: {

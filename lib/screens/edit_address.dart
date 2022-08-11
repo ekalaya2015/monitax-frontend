@@ -13,9 +13,13 @@ import 'package:monitax/config.dart';
 import 'package:monitax/models/indonesia.dart';
 import 'package:change_case/change_case.dart';
 
+import '../models/user.dart';
+
 class EditAddress extends StatefulWidget {
   final String data;
-  EditAddress({Key? key, required this.data}) : super(key: key);
+  final Area area;
+  EditAddress({Key? key, required this.data, required this.area})
+      : super(key: key);
   @override
   State<EditAddress> createState() => _EditAddressState();
 }
@@ -36,10 +40,10 @@ class _EditAddressState extends State<EditAddress> {
     txtAddress.text = widget.data;
     setState(() {
       isUpdated = false;
-      selectedProvinsi = 0;
-      selectedCity = 0;
-      selectedKecamatan = 0;
-      selectedKelurahan = 0;
+      selectedProvinsi = widget.area.provinsi_id;
+      selectedCity = widget.area.kota_id;
+      selectedKecamatan = widget.area.kecamatan_id;
+      selectedKelurahan = widget.area.kelurahan_id;
     });
   }
 
@@ -96,6 +100,14 @@ class _EditAddressState extends State<EditAddress> {
     return subdistricts;
   }
 
+  void _validateInputs() {
+    if (_formkey.currentState!.validate()) {
+      //If all data are correct then save data to out variables
+      _formkey.currentState!.save();
+      doUpdate();
+    }
+  }
+
   doUpdate() async {
     setState(() {
       isLoading = true;
@@ -104,7 +116,15 @@ class _EditAddressState extends State<EditAddress> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     var token = pref.getString('token');
     var url = '${Config.apiURL}/users/me/profile';
-    final body = jsonEncode({'address': txtAddress.text});
+    final body = jsonEncode({
+      'address': txtAddress.text,
+      'area': {
+        "provinsi_id": selectedProvinsi,
+        "kota_id": selectedCity,
+        "kecamatan_id": selectedKecamatan,
+        "kelurahan_id": selectedKelurahan
+      }
+    });
     final response = await http
         .patch(Uri.parse(url),
             headers: {
@@ -182,6 +202,11 @@ class _EditAddressState extends State<EditAddress> {
                                   padding: const EdgeInsets.only(
                                       left: 12, right: 12),
                                   child: DropdownButtonFormField<int>(
+                                    validator: (value) {
+                                      if (value == 0) {
+                                        return "Provinsi harus diisi";
+                                      }
+                                    },
                                     value: selectedProvinsi,
                                     items: provinsis.map((e) {
                                       return DropdownMenuItem<int>(
@@ -249,6 +274,11 @@ class _EditAddressState extends State<EditAddress> {
                                     padding: const EdgeInsets.only(
                                         left: 12, right: 12),
                                     child: DropdownButtonFormField<int>(
+                                      validator: (value) {
+                                        if (value == 0) {
+                                          return "Kota harus diisi";
+                                        }
+                                      },
                                       value: selectedCity,
                                       items: cities.map((e) {
                                         return DropdownMenuItem<int>(
@@ -318,6 +348,11 @@ class _EditAddressState extends State<EditAddress> {
                                     padding: const EdgeInsets.only(
                                         left: 12, right: 12),
                                     child: DropdownButtonFormField<int>(
+                                      validator: (value) {
+                                        if (value == 0) {
+                                          return "Kecamatan harus diisi";
+                                        }
+                                      },
                                       value: selectedKecamatan,
                                       items: districts.map((e) {
                                         return DropdownMenuItem<int>(
@@ -387,6 +422,11 @@ class _EditAddressState extends State<EditAddress> {
                                     padding: const EdgeInsets.only(
                                         left: 12, right: 12),
                                     child: DropdownButtonFormField<int>(
+                                      validator: (value) {
+                                        if (value == 0) {
+                                          return "Kelurahan harus diisi";
+                                        }
+                                      },
                                       value: selectedKelurahan,
                                       items: subdistricts.map((e) {
                                         return DropdownMenuItem<int>(
@@ -465,7 +505,8 @@ class _EditAddressState extends State<EditAddress> {
                                       style: TextStyle(fontSize: 16),
                                     ),
                               onPressed: () {
-                                doUpdate();
+                                // doUpdate();
+                                _validateInputs();
                               },
                             ),
                           )),

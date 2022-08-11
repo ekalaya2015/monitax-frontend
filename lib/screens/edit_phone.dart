@@ -42,7 +42,7 @@ class _EditPhoneState extends State<EditPhone> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     var token = pref.getString('token');
     var url = '${Config.apiURL}/users/me/profile';
-    final body = jsonEncode({'phone_no': txtPhone.text});
+    final body = jsonEncode({'phone_no': txtPhone.text, 'area': {}});
     final response = await http
         .patch(Uri.parse(url),
             headers: {
