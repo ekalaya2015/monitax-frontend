@@ -99,7 +99,7 @@ class UserApi {
     SharedPreferences pref = await SharedPreferences.getInstance();
     String? token = pref.getString('token');
 
-    response = await dio.post("${Config.apiURL}/users/upload",
+    response = await dio.post("${Config.apiURL}/users/me/upload",
         data: formData,
         options: Options(headers: {
           'Content-Type': 'multipart/form-data',
