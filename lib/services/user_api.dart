@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:monitax/config.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -89,7 +90,7 @@ class UserApi {
     }
   }
 
-  Future<String> upload(File file) async {
+  Future<dynamic> upload(File file) async {
     var dio = Dio();
     Response response;
     String fileName = file.path.split('/').last;
@@ -98,14 +99,17 @@ class UserApi {
     });
     SharedPreferences pref = await SharedPreferences.getInstance();
     String? token = pref.getString('token');
-
-    response = await dio.post("${Config.apiURL}/users/me/upload",
-        data: formData,
-        options: Options(headers: {
-          'Content-Type': 'multipart/form-data',
-          'Access-Control_Allow_Origin': '*',
-          'Authorization': 'Bearer $token'
-        }));
-    return response.data['pic'];
+    try {
+      response = await dio.post("${Config.apiURL}/users/me/upload",
+          data: formData,
+          options: Options(headers: {
+            'Content-Type': 'multipart/form-data',
+            'Access-Control_Allow_Origin': '*',
+            'Authorization': 'Bearer $token'
+          }));
+      return response;
+    } on DioError catch (e) {
+      return e.response;
+    }
   }
 }

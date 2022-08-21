@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io;
 import 'dart:typed_data';
+import 'package:dio/dio.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:monitax/widgets/display_image.dart';
@@ -337,20 +338,39 @@ class _UserProfileState extends State<UserProfile> {
                         String tempPath = (await getTemporaryDirectory()).path;
                         io.File file = io.File('$tempPath/profile.jpg');
                         await file.writeAsBytes(bytes);
-                        String response = await UserApi().upload(file);
-                        if (response.isNotEmpty) {
-                          // ignore: use_build_context_synchronously
-                          OverlayLoadingProgress.stop(context);
+
+                        Response response = await UserApi().upload(file);
+                        if (response.statusCode == 200) {
                           // ignore: use_build_context_synchronously
                           showTopSnackBar(
                               context,
                               const CustomSnackBar.success(
                                   message: 'Upload picture success'));
                           setState(() {
-                            picurl = response;
+                            picurl = response.data['pic'];
                             isUpdated = true;
                           });
+                        } else if (response.statusCode == 429) {
+                          int retry = 0;
+                          Headers headers = response.headers;
+                          if (headers.value("retry-after") != null) {
+                            retry = int.parse(headers.value("retry-after")!);
+                          }
+                          // ignore: use_build_context_synchronously
+                          showTopSnackBar(
+                              context,
+                              CustomSnackBar.error(
+                                  message:
+                                      "Too many request. Retry after $retry seconds"));
+                        } else {
+                          // ignore: use_build_context_synchronously
+                          showTopSnackBar(
+                              context,
+                              CustomSnackBar.error(
+                                  message: response.statusMessage!));
                         }
+                        // ignore: use_build_context_synchronously
+                        OverlayLoadingProgress.stop(context);
                       }
                     },
                     child: const Icon(
